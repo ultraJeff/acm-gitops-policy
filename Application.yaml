@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: todo-demo-app
+spec:
+  destination:
+    name: ''
+    namespace: todo-demo-app
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: charts/todo-demo-app
+    repoURL: 'https://github.com/tosin2013/todo-demo-app-helmrepo'
+    targetRevision: main
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
