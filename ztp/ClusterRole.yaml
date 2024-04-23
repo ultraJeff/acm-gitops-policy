@@ -1,0 +1,68 @@
+# Example of a more nuanced cluster role than cluster-admin
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ztprole
+rules:
+  - apiGroups:
+      - agent-install.openshift.io
+      - extensions.hive.openshift.io
+      - hive.openshift.io
+      - metal3.io
+      - cluster.open-cluster-management.io
+      - ran.openshift.io
+      # needed for disable sync and enable sync on argo applications
+      - argoproj.io
+      # needed for node replacement flow
+      - nmstateconfigs.agent-install.openshift.io
+      # for validation hw replacement
+      - admissionregistration.k8s.io
+      # for ansiblejobs
+      - tower.ansible.com
+      - redhatcop.redhat.io
+    resources:
+      - infraenvs
+      - agentclusterinstalls
+      - clusterdeployments
+      - baremetalhosts
+      - managedclusters
+      - clustergroupupgrades
+      - applications
+      - nmstateconfigs
+      - validatingwebhookconfigurations
+      - ansiblejobs
+      - ansibleworkflows
+      - vaultsecrets
+    verbs:
+      - get
+      - list
+      - watch
+      - delete
+      - create
+      - patch
+  # Allow our ZTP user to create namespace
+  # This is needed in order to import the cluster
+  - apiGroups:
+      - ""
+      - apps
+    resources:
+      - namespaces
+      - secrets
+      - serviceaccounts
+      - configmaps
+      # - managedclusters
+      # - managedclustervalidators
+      # - managedclustersets/join
+      # - klusterletaddonconfigs
+    verbs:
+      - "*"
+  # webhook for field in ManagedCluster
+  - apiGroups:
+      - admission.cluster.open-cluster-management.io
+      - admission.work.open-cluster-management.io
+      - cluster.open-cluster-management.io
+      - agent.open-cluster-management.io
+    resources:
+      - "*"
+    verbs:
+      - "*"
